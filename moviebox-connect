@@ -1,0 +1,130 @@
+#!/usr/local/bin/perl
+
+# http://load.sh:3000/blog/2016/11/18/watch-moviebox-on-linux/
+
+use 5.010;
+use warnings;
+use strict;
+
+use Getopt::Std;
+use Filesys::Notify::Simple;
+use JSON::PP;
+use Net::OpenSSH;
+
+# get user config
+my $opt = {};
+getopts('u:i:p:sl', $opt);
+status() if $opt->{s};
+
+# get config
+my $c = decode_json scalar <DATA>;
+
+# init last cache
+system("cp $c->{ios}->{cache} $c->{ios}->{old_cache}");
+
+# list status and die;
+sub status {
+    my $ps = `ps aux|grep moviebox-connect | grep -v grep | grep -v "connect -s"`;
+    say "\nSTATUS:";
+    if($ps){ say "\tmoviebox-connect is running\n" } else { say "\tmoviebox-connect is not running\n" };
+
+    die bless [], 'Dies';
+    package Dies;
+    use overload '""' => 'dies';
+    sub dies { return '' }
+}
+
+# get last URL
+sub url {
+    my $diff = `diff $c->{ios}->{cache} $c->{ios}->{old_cache}`;
+    open my $fh,'<',\$diff;
+    while(<$fh>){
+        if(/\.mp4/){
+            s/(.*key\>?)(http:\/\/.*?)(<\/.*)/$2/;
+            system("cp $c->{ios}->{cache} $c->{ios}->{old_cache}");
+            playlist($2);
+            last;
+        }
+    }
+}
+
+# write playlist file
+sub playlist {
+    my $url = shift;
+    return $url if $opt->{l}; #--- print URL if -l option
+    my @cmd = ( "echo \'$c->{playlist}->{head}$url$c->{playlist}->{tail}\' > ~/Desktop/moviebox.xspf" );
+    my $ssh;
+    if($opt->{u} and $opt->{i} and $opt->{p}){ 
+        #--- get user details from command line
+        $ssh = Net::OpenSSH->new("$opt->{u}:$opt->{p}\@$opt->{i}");
+    } else { 
+        #--- get user details from config file
+        if(-f $c->{ios}->{user}){
+            local $/;
+            open(my $fh,'<', $c->{ios}->{user}) || die "cant open file $c->{ios}->{user}: $!";
+            my $user = decode_json scalar <$fh>;
+            $ssh = Net::OpenSSH->new("$user->{username}:$user->{password}\@$user->{ipaddress}");
+        }
+    }
+    $ssh->capture(@cmd);
+}
+
+$| = 1;
+my $watcher = Filesys::Notify::Simple->new([ $c->{ios}->{cache}]);
+
+daemon();
+
+while (1) {
+        $watcher->wait(sub {
+                for my $event (@_) {
+                    url();
+                }
+       });
+}
+
+sub daemon {
+    no strict 'subs';
+    chdir '/' or die "Can't chdir to /: $!";
+    open STDIN, '/dev/null' or die "Can't read /dev/null: $!";
+    open STDOUT, '>/dev/null' or die "Can't write to /dev/null: $!";
+    defined(my $pid = fork) or die "Can't fork: $!";
+    exit if $pid;
+    #setsid() or die "Can't start a new session: $!";
+    open STDERR, '>&STDOUT' or die "Can't dup stdout: $!";
+}
+
+
+=head1 NAME
+
+moviebox-connect
+
+=cut
+
+=head1 SYNOPSIS
+
+Creates VLC playlist ~/Desktop/moviebox.xspf on remote host for last movie played on iOS MovieBox app. 
+
+=cut
+
+=head1 USAGE
+
+Create playlist for VLC and send it to ~/Desktop/moviebox.xspf on username@ipaddress
+
+    moviebox-connect -u username -i ipaddress -p password
+
+or fill remote host details in ~/moviebox-connect.json and start without any option
+
+    moviebox-connect
+
+Just print URL and exit
+    
+    moviebox-connect -l
+
+See if moviebox-connect is running
+
+    moviebox-connect -s
+
+=cut
+
+__DATA__
+{"ios":{"cache":"/private/var/tmp/MediaCache/diskcacherepository.plist","old_cache":"/private/var/mobile/.moviebox-connect","playlist":"/private/var/tmp/moviebox.xspf","user":"/var/mobile/moviebox-connect.json"},"playlist":{"head":"<?xml version=\"1.0\" encoding=\"UTF-8\"?><playlist xmlns=\"http://xspf.org/ns/0/\" xmlns:vlc=\"http://www.videolan.org/vlc/playlist/ns/0/\" version=\"1\"><title>Playlist</title><trackList><track><location>","url":"","tail":"</location><extension application=\"http://www.videolan.org/vlc/playlist/0\"><vlc:id>0</vlc:id><vlc:option>network-caching=1000</vlc:option></extension></track></trackList><extension application=\"http://www.videolan.org/vlc/playlist/0\"><vlc:item tid=\"0\"/></extension></playlist>"}}
