@@ -12,11 +12,12 @@ Make sure iOS is connected to the same WiFi as your computer.
 
 ####1.iPhone
 
-Add `http://load.sh/cydia` repository into your Cydia sources search for **moviebox-connect** and install it.
+Add `http://load.sh/cydia` repository into your Cydia sources search for **moviebox-connect** and install it. Open file `/var/mobile/moviebox-connect.json` and fill *username*, *password* and *IP address* of your **comuter**.
 
 ####2.Computer
 
 **Linux**
+
 Install VLC and ssh.
 
 ```
@@ -24,6 +25,7 @@ sudo apt-get install vlc openssh-server
 ```
 
 **OSX**
+
 [Download](http://www.videolan.org/vlc/download-macosx.cs.html) and install **VLC**. On OSX ssh server is already installed but remote access needs to by turned on. Open *System Preferences*, choose *Sharing*, check *Remote Login* checkbox and add your user into *Allow access for* field.
 
 # USAGE
