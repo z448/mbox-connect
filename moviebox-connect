@@ -12,7 +12,6 @@ use JSON::PP;
 use Net::OpenSSH;
 
 # todo 
-# get config from cli by default
 # put tmp file path in DATA
 # -stop kills mb-connect 
 # activator send libactivator.sms.compose-message
