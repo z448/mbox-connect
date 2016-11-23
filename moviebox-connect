@@ -29,14 +29,18 @@ if($opt->{l}){
 }
 
 # init 
+mkdir("$ENV{HOME}/.moviebox-connect-dir") unless -f "$ENV{HOME}/.moviebox-connect-dir";
 system("cp $c->{ios}->{cache} $c->{ios}->{old_cache}") unless -f $c->{ios}->{old_cache};
 system("echo '$c->{ios}->{user_template}' > $c->{ios}->{user}") unless -f $c->{ios}->{user};
 
 # list status and die;
 sub status {
-    my $ps = q#ps aux|grep moviebox-connect|grep -v grep|grep -v "connect -s"|grep -v "connect -k"|cut -d" " -f7#;
-    push my @ps, `$ps`;
-    for(@ps){ chomp($_); system("kill -9 $_") if $opt->{k}; say ": $_" }
+    my $pids = ' ';
+    my @ps = grep{ /moviebox-connect/ } qx{ ps aux };
+    for(@ps){ push my @pid, split(" ", $_); $pids .= " $pid[1]" unless $pid[1] eq $$ }
+    if(exists $opt->{k}){ system("kill -9 $pids");say "killed: $pids"; die bless [], 'Dies'; }
+    if($pids eq ' '){ say "$0: not running" } else { say "$0: $pids" }
+    
     die bless [], 'Dies';
     package Dies;
     use overload '""' => 'dies';
@@ -134,4 +138,4 @@ Stop moviebox-connect
 =cut
 
 __DATA__
-{"ios":{"cache":"/private/var/tmp/MediaCache/diskcacherepository.plist","old_cache":"/private/var/mobile/.moviebox-connect","playlist":"/private/var/tmp/moviebox.xspf","url":"/tmp/.moviebox-connect","user":"/var/mobile/moviebox-connect.json","user_template":"{\"username\":\"fill\",\"ipaddress\":\"fill\",\"password\":\"fill\"}"},"playlist":{"head":"<?xml version=\"1.0\" encoding=\"UTF-8\"?><playlist xmlns=\"http://xspf.org/ns/0/\" xmlns:vlc=\"http://www.videolan.org/vlc/playlist/ns/0/\"version=\"1\"><title>Playlist</title><trackList><track><location>","url":"","tail":"</location><extension application=\"http://www.videolan.org/vlc/playlist/0\"><vlc:id>0</vlc:id><vlc:option>network-caching=1000</vlc:option></extension></track></trackList><extension application=\"http://www.videolan.org/vlc/playlist/0\"><vlc:item tid=\"0\"/></extension></playlist>"}}
+{"ios":{"cache":"/private/var/tmp/MediaCache/diskcacherepository.plist","old_cache":"/private/var/mobile/.moviebox-connect","playlist":"/private/var/tmp/moviebox.xspf","url":"/tmp/.moviebox-connect","user":"/var/mobile/moviebox-connect.json","user_template":"{\"username\":\"fill\",\"ipaddress\":\"fill\",\"password\":\"fill\"}"},"playlist":{"head":"<?xml version=\"1.0\" encoding=\"UTF-8\"?><playlist xmlns=\"http://xspf.org/ns/0/\" xmlns:vlc=\"http://www.videolan.org/vlc/playlist/ns/0/\" version=\"1\"><title>Playlist</title><trackList><track><location>","url":"","tail":"</location><extension application=\"http://www.videolan.org/vlc/playlist/0\"><vlc:id>0</vlc:id><vlc:option>network-caching=1000</vlc:option></extension></track></trackList><extension application=\"http://www.videolan.org/vlc/playlist/0\"><vlc:item tid=\"0\"/></extension></playlist>"}}
