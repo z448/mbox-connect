@@ -11,6 +11,10 @@ use Filesys::Notify::Simple;
 use JSON::PP;
 use Net::OpenSSH;
 
+# todo 
+# activator send libactivator.sms.compose-message
+# moviebox-connect -l | pbcopy
+
 # get user config
 my $opt = {};
 getopts('u:i:p:sl', $opt);
@@ -18,9 +22,14 @@ status() if $opt->{s};
 
 # get config
 my $c = decode_json scalar <DATA>;
+if($opt->{l}){ 
+    open(my $fh,'<',"/tmp/.moviebox-connect");
+    my $url = <$fh>;
+    print $url and die;
+}
 
 # init last cache
-system("cp $c->{ios}->{cache} $c->{ios}->{old_cache}");
+#system("cp $c->{ios}->{cache} $c->{ios}->{old_cache}");
 
 # list status and die;
 sub status {
@@ -41,17 +50,18 @@ sub url {
     while(<$fh>){
         if(/\.mp4/){
             s/(.*key\>?)(http:\/\/.*?)(<\/.*)/$2/;
-            system("cp $c->{ios}->{cache} $c->{ios}->{old_cache}");
-            playlist($2);
-            last;
+            return $2;
         }
     }
 }
 
 # write playlist file
 sub playlist {
-    my $url = shift;
-    return $url if $opt->{l}; #--- print URL if -l option
+    my $url = url();
+    open(my $fh,'>',"/tmp/.moviebox-connect");
+    print $fh $url;
+    close $fh;
+    system("cp $c->{ios}->{cache} $c->{ios}->{old_cache}");
     my @cmd = ( "echo \'$c->{playlist}->{head}$url$c->{playlist}->{tail}\' > ~/Desktop/moviebox.xspf" );
     my $ssh;
     if($opt->{u} and $opt->{i} and $opt->{p}){ 
@@ -77,7 +87,7 @@ daemon();
 while (1) {
         $watcher->wait(sub {
                 for my $event (@_) {
-                    url();
+                    playlist();
                 }
        });
 }
