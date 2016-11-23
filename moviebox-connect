@@ -16,9 +16,9 @@ use Net::OpenSSH;
 # moviebox-connect -l | pbcopy
 
 my $opt = {};
-getopts('u:i:p:sl', $opt);
+getopts('u:i:p:slk', $opt);
 
-status() if $opt->{s};
+status() if $opt->{s} or $opt->{k};
 
 # get config
 my $c = decode_json scalar <DATA>;
@@ -34,10 +34,13 @@ system("echo '$c->{ios}->{user_template}' > $c->{ios}->{user}") unless -f $c->{i
 
 # list status and die;
 sub status {
-    push my @ps, `ps -ef|grep $0|grep -v grep|grep -v "connect -s"|cut -d' ' -f5`;
-    if(@ps){ for(@ps){ say "$0: $_" }} else { say "$0: not running" }
+    my $ps = q#ps aux|grep moviebox-connect|grep -v grep|grep -v "connect -s"|grep -v "connect -k"|cut -d" " -f7#;
+    push my @ps, `$ps`;
+    for(@ps){ chomp($_); system("kill -9 $_") if $opt->{k}; say ": $_" }
     die bless [], 'Dies';
-    package Dies; use overload '""' => 'dies'; sub dies { return '' }
+    package Dies;
+    use overload '""' => 'dies';
+    sub dies { return '' }
 }
 
 # get last URL
@@ -123,6 +126,10 @@ Just print URL and exit
 See if moviebox-connect is running
 
     moviebox-connect -s
+
+Stop moviebox-connect
+
+    moviebox-connect -k
 
 =cut
 
