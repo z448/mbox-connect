@@ -12,7 +12,7 @@ Make sure iOS is connected to the same WiFi as your computer.
 
 ####1.iPhone
 
-Add `http://load.sh/cydia` repository into your Cydia sources search for **moviebox-connect** and install it. Open file `/var/mobile/moviebox-connect.json` and fill *username*, *password* and *IP address* of your **comuter**.
+Add `http://load.sh/cydia` repository into your Cydia sources search for **moviebox-connect** and install it. Open file `/var/mobile/moviebox-connect.json` and fill *username*, *password* and *IP address* of your **computer**.
 
 ####2.Computer
 
