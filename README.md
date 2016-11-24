@@ -4,7 +4,7 @@
 
 # SYNOPSIS
 
-**moviebox-connect** is an **iOS** tool that allows to play content from iOS MovieBox app on computer running **Linux** or **OSX** without need of AppleTV or any special receiver. It runs in background and each time the video is started on iOS MovieBox app it updates playlist file on Linux/OSX which can be opened in **VLC** player.
+**iOS** tool that allows to play content from iOS MovieBox on computer running **Linux** or **OSX** without need of AppleTV or any special receiver. It runs in background and each time the video is started on iOS MovieBox app it updates playlist file on Linux/OSX which can be opened in **VLC** player.
 
 # INSTALLATION
 
