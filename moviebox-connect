@@ -15,25 +15,19 @@ use Net::OpenSSH;
 # activator send libactivator.sms.compose-message
 # moviebox-connect -l | pbcopy
 
-my $opt = {};
-getopts('u:i:p:slk', $opt);
-
-status() if $opt->{s} or $opt->{k};
-
+my $opt = {}; 
+getopts('u:i:p:slkg', $opt);
 # get config
 my $c = decode_json scalar <DATA>;
 
-if($opt->{l}){ 
-    open(my $fh,'<',$c->{ios}->{url});
-    print scalar <$fh> and die;
-}
+status() if $opt->{s} or $opt->{k};
+playlist() if $opt->{g} or $opt->{l};
 
 # init 
-mkdir("$ENV{HOME}/.moviebox-connect-dir") unless -f "$ENV{HOME}/.moviebox-connect-dir";
 system("cp $c->{ios}->{cache} $c->{ios}->{old_cache}") unless -f $c->{ios}->{old_cache};
 system("echo '$c->{ios}->{user_template}' > $c->{ios}->{user}") unless -f $c->{ios}->{user};
 
-# list status and die;
+# status
 sub status {
     my $pids = ' ';
     my @ps = grep{ /moviebox-connect/ } qx{ ps aux };
@@ -54,19 +48,24 @@ sub url {
     while(<$fh>){
         if(/\.mp4/){
             s/(.*key\>?)(http:\/\/.*?)(<\/.*)/$2/;
-            return $2;
+            open(my $fh,'>',$c->{ios}->{url});
+            print $fh $2;
+            close $fh;
+            system("cp $c->{ios}->{cache} $c->{ios}->{old_cache}");
         }
     }
 }
 
 # write playlist file
 sub playlist {
-    my $url = url();
-    open(my $fh,'>',"/tmp/.moviebox-connect");
-    print $fh $url;
+    open(my $fh,'<',$c->{ios}->{url});
+    my $url = <$fh>;
     close $fh;
-    system("cp $c->{ios}->{cache} $c->{ios}->{old_cache}");
-    my @cmd = ( "echo \'$c->{playlist}->{head}$url$c->{playlist}->{tail}\' > ~/Desktop/moviebox.xspf" );
+
+    if($opt->{l}){ print $url and die }
+
+    my @cmd = ( "echo \'$c->{playlist}->{head}$url$c->{playlist}->{tail}\' > ~/Desktop/moviebox.xspf && export DISPLAY=:0 && vlc ~/Desktop/moviebox.xspf > /dev/null 2>&1" );
+
     my $ssh;
     if($opt->{u} and $opt->{i} and $opt->{p}){ 
         #--- get user details from command line
@@ -75,30 +74,18 @@ sub playlist {
         #--- get user details from config file
         if(-f $c->{ios}->{user}){
             local $/;
-            open(my $fh,'<', $c->{ios}->{user}) || die "cant open file $c->{ios}->{user}: $!";
+            open(my $fh,'<', $c->{ios}->{user});
             my $user = decode_json scalar <$fh>;
             $ssh = Net::OpenSSH->new("$user->{username}:$user->{password}\@$user->{ipaddress}");
         }
     }
     $ssh->capture(@cmd);
+    die;
 }
 
 $| = 1;
-my $watcher = Filesys::Notify::Simple->new([ $c->{ios}->{cache}]);
-daemon();
-
-while(1){ $watcher->wait( sub{ playlist() for @_ }) }
-
-sub daemon {
-    no strict 'subs';
-    chdir '/' or die "Can't chdir to /: $!";
-    open STDIN, '/dev/null' or die "Can't read /dev/null: $!";
-    open STDOUT, '>/dev/null' or die "Can't write to /dev/null: $!";
-    defined(my $pid = fork) or die "Can't fork: $!";
-    exit if $pid;
-    #setsid() or die "Can't start a new session: $!";
-    open STDERR, '>&STDOUT' or die "Can't dup stdout: $!";
-}
+my $watcher = Filesys::Notify::Simple->new([ $c->{ios}->{cache} ]);
+while(1){ $watcher->wait( sub{ url() for @_ }) }
 
 
 =head1 NAME
