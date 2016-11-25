@@ -4,7 +4,7 @@
 
 # SYNOPSIS
 
-**iOS** tool that allows to play content from iOS MovieBox on computer running **Linux** or **OSX** without need of AppleTV or any special receiver as it's using ssh. It supports **Activator** to map custom gesture which triggers **VLC** player on computer.
+**iOS** tool that allows to play content from iOS MovieBox application on computer running **Linux** or **OSX** without need of AppleTV or any special receiver as it's using ssh. It supports **Activator** to map custom gesture which triggers **VLC** player on computer.
 
 # INSTALLATION
 
