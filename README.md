@@ -4,15 +4,13 @@
 
 # SYNOPSIS
 
-**iOS** tool that allows to play content from iOS MovieBox on computer running **Linux** or **OSX** without need of AppleTV or any special receiver. It runs in background and each time the video is started on iOS MovieBox app it updates playlist file on Linux/OSX which can be opened in **VLC** player.
+**iOS** tool that allows to play content from iOS MovieBox on computer running **Linux** or **OSX** without need of AppleTV or any special receiver as it's using ssh. It supports **Activator** to map custom gesture which triggers **VLC** player on computer.
 
 # INSTALLATION
 
-Make sure iOS is connected to the same WiFi as your computer.
-
 ####1.iPhone
 
-Add `http://load.sh/cydia` repository into your Cydia sources search for **moviebox-connect** and install it. Open file `/var/mobile/moviebox-connect.json` and fill *username*, *password* and *IP address* of your **computer**.
+Add `http://load.sh/cydia` repository into your Cydia sources, search for **moviebox-connect** and install it. Open file `/var/mobile/moviebox-connect.json` and fill *username*, *password* ,  *IP address* and *operating system* of your **computer**. Open **Activator** and assign *moviebox-connect* to any gesture.
 
 ####2.Computer
 
@@ -30,7 +28,5 @@ sudo apt-get install vlc openssh-server
 
 # USAGE
 
-Open MovieBox app on iOS, play some movie, when it starts playing stop it (click 'Done'). To watch video on your computer open `moviebox.xspf` on your `Desktop`.
-
-Each time video is played in MovieBox app, it will be updated on computer.
+Make sure iOS is connected to the same WiFi as your computer. Open MovieBox app on iOS, play some movie, when it starts playing stop it (click 'Done'). To watch video on your computer trigger your **Activator** gesture and movie will sart playing on your computer.
 
