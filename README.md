@@ -28,5 +28,5 @@ sudo apt-get install vlc openssh-server
 
 # USAGE
 
-Make sure iOS is connected to the same WiFi as your computer. Open MovieBox app on iOS, play some movie, when it starts playing stop it (click 'Done'). To watch video on your computer trigger your **Activator** gesture and movie will sart playing on your computer.
+Make sure iOS is connected to the same WiFi as your computer. Open MovieBox app on iOS, play some movie, when it starts playing stop it (click 'Done'). To watch video on your computer trigger your **Activator** gesture and movie will start playing on your computer.
 
