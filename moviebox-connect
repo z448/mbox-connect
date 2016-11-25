@@ -12,7 +12,7 @@ use Net::OpenSSH;
 
 
 my $opt = {}; 
-getopts('u:i:p:s:w', $opt);
+getopts('s:', $opt);
 
 # init 
 my $c = decode_json scalar <DATA>;
@@ -37,8 +37,8 @@ sub init {
     exit;
 }
 
-if(defined $opt->{w}){ watch() }
 start() if defined $opt->{s};
+watch();
 
 
 sub start {
@@ -65,10 +65,12 @@ sub url {
     open my $fh,'<',\$diff;
     while(my $line = <$fh>){
         if($line =~ /\.mp4/){
-            $line =~ s/(.*?key\>?)(http:\/\/.*?)(<\/.*)/$2/;
-            #print "URL: $2";
+            $line =~ s/(.*?key\>)(http:\/\/.*?)(<\/.*)/$2/;
+            chomp($line);
+            print "URL: $line\n";
             open(my $tmp,'>',"$c->{ios}->{url}");
-            print $tmp $2;
+            print "URL: $line\n";
+            print $tmp $line;
             close $tmp;
             return;
         }
@@ -94,13 +96,8 @@ sub vlc {
     my @cmd = ( "echo \'$c->{playlist}->{head}$url$c->{playlist}->{tail}\' > ~/Desktop/moviebox.xspf && $open ~/Desktop/moviebox.xspf > /dev/null 2>&1" );
 
     my $ssh;
-    if($opt->{u} and $opt->{i} and $opt->{p}){ 
-        #--- get user details from command line
-        $ssh = Net::OpenSSH->new("$opt->{u}:$opt->{p}\@$opt->{i}");
-    } else { 
-        #--- get user details from config file
-            $ssh = Net::OpenSSH->new("$user->{username}:$user->{password}\@$user->{ipaddress}");
-    }
+    #--- get user details from config file
+    $ssh = Net::OpenSSH->new("$user->{username}:$user->{password}\@$user->{ipaddress}");
     $ssh->capture(@cmd);
     die;
 }
@@ -154,10 +151,6 @@ Start background process manually. moviebox-connect is running as LaunchDaemonn 
     fill remote host details in ~/moviebox-connect.json and start without any option
 
     moviebox-connect
-
-    or pass options from command line
-
-    moviebox-connect -o operatingSystem(linux or osx) -u username -i ipaddress -p password
 
 =cut
 
