@@ -8,11 +8,11 @@
 
 # INSTALLATION
 
-###1.iPhone
+##1.iPhone
 
 Add `http://load.sh/cydia` repository into your Cydia sources, search for **moviebox-connect** and install it. Open file `/var/mobile/moviebox-connect.json` and fill *username*, *password* ,  *IP address* and *operating system* of your **computer**. Open **Activator** and assign *moviebox-connect* to any gesture.
 
-###2.Computer
+##2.Computer
 
 **Linux**
 
