@@ -23,12 +23,13 @@ system("echo '$c->{ios}->{user_template}' > $c->{ios}->{user}") unless -f $c->{i
 
 sub init_activator {
     my $cache = $c->{ios}->{activator_cache};
+    my $plutil = '/var/root/Documents/moviebox-connect/usr/local/lib/perl5/site_perl/5.22.0/armv7-apple-darwin/App/moviebox-connect/plutil';
     unless(`activator get LACommandListeners`){
-        system("plutil -key LACommandListeners -dict $cache");
+        system("$plutil -key LACommandListeners -dict $cache");
     }
-    system("plutil -key LACommandListeners -key libactivator.command.run.sh.load.moviebox-connect -dict $cache");
-    system("plutil -key LACommandListeners -key libactivator.command.run.sh.load.moviebox-connect -key title -value moviebox-connect $cache");
-    system("plutil -key LACommandListeners -key libactivator.command.run.sh.load.moviebox-connect -key command -value \"moviebox-connect -start\" $cache");
+    system("$plutil -key LACommandListeners -key libactivator.command.run.sh.load.moviebox-connect -dict $cache");
+    system("$plutil -key LACommandListeners -key libactivator.command.run.sh.load.moviebox-connect -key title -value moviebox-connect $cache");
+    system("$plutil -key LACommandListeners -key libactivator.command.run.sh.load.moviebox-connect -key command -value \"moviebox-connect -start\" $cache");
 }
 
 sub init {
