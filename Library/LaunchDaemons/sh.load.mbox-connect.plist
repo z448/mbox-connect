@@ -4,10 +4,10 @@
 
  <dict>
      <key>Label</key>
-     <string>sh.load.moviebox-connect</string>
+     <string>sh.load.mbox-connect</string>
 
      <key>Program</key>
-     <string>/usr/bin/moviebox-connect</string>
+     <string>/usr/bin/mbox-connect</string>
 
      <key>UserName</key>
      <string>mobile</string>

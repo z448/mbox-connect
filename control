@@ -1,10 +1,10 @@
-Name: moviebox-connect
-Version: 1.3-1
+Name: mbox-connect
+Version: 1.4
 Author: z448 <zed448@icloud.com>
 Architecture: iphoneos-arm
-Package: sh.load.moviebox-connect
+Package: sh.load.mbox-connect
 Section: Utilities
 Maintainer: z448
-Homepage: http://github.com/z448/moviebox-connect
+Homepage: http://github.com/z448/mbox-connect
 Description: Watch Moviebox content on Linux/OSX
 Depends: sh.load.perl.5.22.0, openssh, libio-tty-p5220, libnet-openssh-p5220, libfilesys-notify-simple-p5220, mobilesubstrate, libactivator

@@ -1,6 +1,6 @@
 # NAME
 
-**moviebox-connect** - play MovieBox content on Linux/OSX.
+**mbox-connect** - play MovieBox content on Linux/OSX.
 
 # SYNOPSIS
 
@@ -10,7 +10,7 @@
 
 ##1. iPhone
 
-Add `http://load.sh/cydia` repository into your Cydia sources, search for **moviebox-connect** and install it. Open file `/var/mobile/moviebox-connect.json` and fill *username*, *password* ,  *IP address* and *operating system (linux/osx)* of your **computer**. Open **Activator** and assign *moviebox-connect* to any gesture.
+Add `http://load.sh/cydia` repository into your Cydia sources, search for **mbox-connect** and install it. Open file `/var/mobile/mbox-connect.json` and fill *username*, *password* ,  *IP address* and *operating system (linux/osx)* of your **computer**. Open **Activator** and assign *mbox-connect* to any gesture.
 
 ##2. Computer
 
