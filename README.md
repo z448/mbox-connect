@@ -8,11 +8,11 @@
 
 # INSTALLATION
 
-##1. iPhone
+## 1. iPhone
 
 Add `http://load.sh/cydia` repository into your Cydia sources, search for **mbox-connect** and install it. Open file `/var/mobile/mbox-connect.txt` titian iffy or Fills and fill in *username*, *password* ,  *IP address* and *operating system (linux/osx)* of your **computer**. Open **Activator** and assign *mbox-connect* to some gesture.
 
-##2. Computer
+## 2. Computer
 
 **Linux**
 
