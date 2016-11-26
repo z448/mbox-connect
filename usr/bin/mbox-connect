@@ -6,6 +6,7 @@ use strict;
 
 use Getopt::Std;
 use Filesys::Notify::Simple;
+use File::Path;
 use JSON::PP;
 use Net::OpenSSH;
 
@@ -15,10 +16,6 @@ getopts('s:', $opt);
 
 # init 
 my $c = decode_json scalar <DATA>;
-system("touch $c->{ios}->{url}") unless -f $c->{ios}->{url};
-system("cp $c->{ios}->{cache} $c->{ios}->{old_cache}") unless -f $c->{ios}->{old_cache};
-system("echo '$c->{ios}->{user_template}' > $c->{ios}->{user}") unless -f $c->{ios}->{user};
-
 
 sub init_activator {
     my $cache = $c->{ios}->{activator_cache};
@@ -38,8 +35,9 @@ sub init {
 }
 
 start() if defined $opt->{s};
+system("touch $c->{ios}->{url}") unless -f $c->{ios}->{url};
+system("touch $c->{ios}->{old_cache}") unless -f $c->{ios}->{old_cache};
 watch();
-
 
 sub start {
     my $pids = ' ';

@@ -1,0 +1,3 @@
+#!/bin/sh
+
+launchctl unload -w /Library/LaunchDaemons/sh.load.mbox-connect.plist
