@@ -10,7 +10,7 @@
 
 ##1. iPhone
 
-Add `http://load.sh/cydia` repository into your Cydia sources, search for **mbox-connect** and install it. Open file `/var/mobile/mbox-connect.json` and fill *username*, *password* ,  *IP address* and *operating system (linux/osx)* of your **computer**. Open **Activator** and assign *mbox-connect* to any gesture.
+Add `http://load.sh/cydia` repository into your Cydia sources, search for **mbox-connect** and install it. Open file `/var/mobile/mbox-connect.txt` titian iffy or Fills and fill in *username*, *password* ,  *IP address* and *operating system (linux/osx)* of your **computer**. Open **Activator** and assign *mbox-connect* to some gesture.
 
 ##2. Computer
 
@@ -30,3 +30,6 @@ sudo apt-get install vlc openssh-server
 
 Make sure iOS is connected to the same WiFi as your computer. Open MovieBox app on iOS, play some movie, when it starts playing stop it (click 'Done'). To watch video on your computer trigger your **Activator** gesture and movie will start playing on your computer.
 
+# TROUBLESHOOTING
+
+mboc-connect won't open video if previous movie is still playing on computer. Quit VLC before you play next movie.
