@@ -90,7 +90,7 @@ sub vlc {
 
     if($opt->{s} eq 'how'){ print $url and return }
 
-    my $open = 'export DISPLAY=:0 && vlc'; $open = 'open' if $user->{os} eq 'osx';
+    my $open = 'export DISPLAY=:0 && vlc -f'; $open = 'open' if $user->{os} eq 'osx';
     my @cmd = ( "echo \'$c->{playlist}->{head}$url$c->{playlist}->{tail}\' > ~/Desktop/moviebox.xspf && $open ~/Desktop/moviebox.xspf > /dev/null 2>&1" );
 
     my $ssh;
