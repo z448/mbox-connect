@@ -1,6 +1,6 @@
 {
       "username": "fill",
-      "ipaddress": "fill",
+      "hostname": "fill",
       "password": "fill",
       "os": "fill"
-}
+
