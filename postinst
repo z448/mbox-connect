@@ -1,4 +1,4 @@
 #!/bin/sh
 
-launchctl load -w /Library/LaunchDaemons/sh.load.mbox-connect.plist
-mbox-connect -setup
+launchctl load -w /Library/LaunchDaemons/sh.load.moviebox-connect.plist
+moviebox-connect -setup

@@ -1,6 +1,6 @@
 # NAME
 
-**mbox-connect** - play MovieBox content on Linux/OSX.
+**moviebox-connect** - play MovieBox content on Linux/OSX.
 
 # SYNOPSIS
 
@@ -10,7 +10,7 @@
 
 ## 1. iPhone
 
-Add `http://load.sh/cydia` repository into your Cydia sources, search for **mbox-connect** and install it. Open file `/var/mobile/mbox-connect.txt` in iFile or Filza and fill in *username*, *password* ,  *hostname* and *operating system (linux/osx)* of your **computer**. Open **Activator** and assign *mbox-connect* to some gesture.
+Add `http://load.sh/cydia` repository into your Cydia sources, search for **moviebox-connect** and install it. Open file `/var/mobile/moviebox-connect.txt` in iFile or Filza and fill in *username*, *password* ,  *hostname* and *operating system (linux/osx)* of your **computer**. Open **Activator** and assign *moviebox-connect* to some gesture.
 
 ## 2. Computer
 
@@ -32,4 +32,4 @@ Make sure iOS is connected to the same WiFi as your computer. Open MovieBox app 
 
 # KNOWN ISSUES
 
-mbox-connect won't open video if previous movie is still playing on computer. Quit VLC  on your computer before you play next video.
+moviebox-connect won't open video if previous movie is still playing on computer. Quit VLC  on your computer before you play next video.
