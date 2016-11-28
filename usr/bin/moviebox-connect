@@ -56,19 +56,24 @@ sub start {
 }
 
 sub url {
-    my $diff = `diff $c->{ios}->{cache} $c->{ios}->{old_cache} |grep mp4`;
-    system("cp $c->{ios}->{cache} $c->{ios}->{old_cache}");
+    #my $diff = `diff $c->{ios}->{cache} $c->{ios}->{old_cache} |grep mp4`;
+    system("cp $c->{ios}->{cache} $c->{ios}->{old_cache}") if -f $c->{ios}->{cache};
     #print $diff . "\n";
-    open my $fh,'<',\$diff;
+
+    open(my $fh,'<',$c->{ios}->{old_cache});
+    #open my $fh,'<',\$diff;
     while(my $line = <$fh>){
         if($line =~ /\.mp4/){
-            $line =~ s/(.*?key\>)(http:\/\/.*?)(<\/.*)/$2/;
+            $line =~ s/(.*?)(http:\/\/.*?)(<\/.*)/$2/;
+            #$line =~ s/(.*?key\>)(http:\/\/.*?)(<\/.*)/$2/;
             chomp($line);
-            print "URL: $line\n";
+            #print "URL: $line\n";
             open(my $tmp,'>',"$c->{ios}->{url}");
-            print "URL: $line\n";
+            #print "URL: $line\n";
             print $tmp $line;
             close $tmp;
+            system("rm -rf /tmp/MediaCache/*");
+            #system("echo '' > $c->{ios}->{cache}");
             return;
         }
     }
@@ -101,7 +106,8 @@ sub vlc {
 
 sub watch {
     $| = 1;
-    my $watcher = Filesys::Notify::Simple->new([ $c->{ios}->{cache} ]);
+    my $watcher = Filesys::Notify::Simple->new([ '/tmp/MediaCache' ]);
+    #my $watcher = Filesys::Notify::Simple->new([ $c->{ios}->{cache} ]);
     while(1){ $watcher->wait( sub{ url() for @_ }) }
 }
 
