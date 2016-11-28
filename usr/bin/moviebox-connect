@@ -29,8 +29,7 @@ sub init_activator {
 }
 
 sub init {
-    my $command_listeners_exist = `activator get LACommandListeners | grep sh.load.moviebox-connect`;
-    unless($command_listeners_exist){ init_activator() }
+    init_activator() unless `activator get LACommandListeners` =~ /sh\.load\.moviebox-connect/;
     exit;
 }
 
