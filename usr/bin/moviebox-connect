@@ -21,7 +21,7 @@ my $c = decode_json scalar <DATA>;
 sub setup_activator {
     my $cache = $c->{ios}->{activator_cache};
     my $plutil = '/usr/local/lib/perl5/site_perl/5.22.0/armv7-apple-darwin/App/moviebox-connect/plutil';
-    return if `activator get LACommandListeners` =~ /sh\.load\.moviebox-connect/;
+    if(`activator get LACommandListeners` =~ /sh\.load\.moviebox-connect/){ return  }
 
     system("$plutil -key LACommandListeners -dict $cache") unless `activator get LACommandListeners`;
     system("$plutil -key LACommandListeners -key libactivator.command.run.sh.load.moviebox-connect -dict $cache");
@@ -30,15 +30,15 @@ sub setup_activator {
 }
 
 start() if defined $opt->{s};
-system("touch $c->{ios}->{url}") unless -f $c->{ios}->{url};
-system("touch $c->{ios}->{old_cache}") unless -f $c->{ios}->{old_cache};
+#system("touch $c->{ios}->{url}") unless -f $c->{ios}->{url};
+#system("touch $c->{ios}->{old_cache}") unless -f $c->{ios}->{old_cache};
 watch();
 
 sub start {
     my $pids = ' ';
     my @ps = grep{ /moviebox-connect/ } qx{ ps aux };
     for(@ps){ push my @pid, split(" ", $_); $pids .= " $pid[1]" unless $pid[1] eq $$ }
-    if($opt->{s} eq 'etup'){ setup_activator() and exit }
+    if($opt->{s} eq 'etup'){ setup_activator(); exit }
     if($opt->{s} eq 'top'){ system("kill -9 $pids");say "killed: $pids"; die bless [], 'Dies'; }
     if($opt->{s} eq 'tatus'){
         if($pids eq ' '){ say "$0: not running" } else { say "$0: $pids" }
