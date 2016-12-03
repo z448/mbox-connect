@@ -14,23 +14,19 @@ use Net::OpenSSH;
 my $opt = {}; 
 getopts('s:', $opt);
 
-# init 
+# get config 
 my $c = decode_json scalar <DATA>;
 
-sub init_activator {
+# create 'run command' in activator
+sub setup_activator {
     my $cache = $c->{ios}->{activator_cache};
     my $plutil = '/usr/local/lib/perl5/site_perl/5.22.0/armv7-apple-darwin/App/moviebox-connect/plutil';
-    unless(`activator get LACommandListeners`){
-        system("$plutil -key LACommandListeners -dict $cache");
-    }
+    return if `activator get LACommandListeners` =~ /sh\.load\.moviebox-connect/;
+
+    system("$plutil -key LACommandListeners -dict $cache") unless `activator get LACommandListeners`;
     system("$plutil -key LACommandListeners -key libactivator.command.run.sh.load.moviebox-connect -dict $cache");
     system("$plutil -key LACommandListeners -key libactivator.command.run.sh.load.moviebox-connect -key title -value moviebox-connect $cache");
     system("$plutil -key LACommandListeners -key libactivator.command.run.sh.load.moviebox-connect -key command -value \"moviebox-connect -start\" $cache");
-}
-
-sub init {
-    init_activator() unless `activator get LACommandListeners` =~ /sh\.load\.moviebox-connect/;
-    exit;
 }
 
 start() if defined $opt->{s};
@@ -42,7 +38,7 @@ sub start {
     my $pids = ' ';
     my @ps = grep{ /moviebox-connect/ } qx{ ps aux };
     for(@ps){ push my @pid, split(" ", $_); $pids .= " $pid[1]" unless $pid[1] eq $$ }
-    if($opt->{s} eq 'etup'){ init() and exit }
+    if($opt->{s} eq 'etup'){ setup_activator() and exit }
     if($opt->{s} eq 'top'){ system("kill -9 $pids");say "killed: $pids"; die bless [], 'Dies'; }
     if($opt->{s} eq 'tatus'){
         if($pids eq ' '){ say "$0: not running" } else { say "$0: $pids" }
@@ -55,17 +51,14 @@ sub start {
     sub dies { return '' }
 }
 
+# get video url
 sub url {
-    #my $diff = `diff $c->{ios}->{cache} $c->{ios}->{old_cache} |grep mp4`;
     system("cp $c->{ios}->{cache} $c->{ios}->{old_cache}") if -f $c->{ios}->{cache};
-    #print $diff . "\n";
 
     open(my $fh,'<',$c->{ios}->{old_cache});
-    #open my $fh,'<',\$diff;
     while(my $line = <$fh>){
         if($line =~ /\.mp4/){
             $line =~ s/(.*?)(http:\/\/.*?)(<\/.*)/$2/;
-            #$line =~ s/(.*?key\>)(http:\/\/.*?)(<\/.*)/$2/;
             chomp($line);
             open(my $tmp,'>',"$c->{ios}->{url}");
             print $tmp $line;
@@ -76,6 +69,7 @@ sub url {
     }
 }
 
+# open vlc on remote host
 sub vlc {
     open(my $fh,'<',"$c->{ios}->{url}");
     my $url = <$fh>;
@@ -90,14 +84,12 @@ sub vlc {
     }
 
     if($opt->{s} eq 'how'){ print $url and return }
-
+    
     system("echo \'$c->{playlist}->{head}$url$c->{playlist}->{tail}\' > /tmp/moviebox.xspf");
-
     my $open = 'export DISPLAY=:0 && vlc -f'; $open = 'open' if $user->{os} eq 'osx';
     my @cmd = ( "echo \'$c->{playlist}->{head}$url$c->{playlist}->{tail}\' > ~/Desktop/moviebox.xspf && $open ~/Desktop/moviebox.xspf > /dev/null 2>&1" );
 
     my $ssh;
-    #--- get user details from config file
     $ssh = Net::OpenSSH->new("$user->{username}:$user->{password}\@$user->{hostname}");
     $ssh->capture(@cmd);
     die;
@@ -106,7 +98,6 @@ sub vlc {
 sub watch {
     $| = 1;
     my $watcher = Filesys::Notify::Simple->new([ '/tmp/MediaCache' ]);
-    #my $watcher = Filesys::Notify::Simple->new([ $c->{ios}->{cache} ]);
     while(1){ $watcher->wait( sub{ url() for @_ }) }
 }
 
@@ -135,7 +126,7 @@ See status ( shows PID or 'not running' )
 
     moviebox-connect -status
 
-Stop. This will stop current proceess and LaunchDaemon will start new one. To also stop background daemon uninstall moviebox-connect.
+Stop. This will stop current proceess and LaunchDaemon will start new one. To also stop background daemon unload it ( launchctl -unload -w /Library/LaunchDaemons/sh.load.moviebox-connect )
 
     moviebox-connect -stop
 
@@ -147,8 +138,7 @@ Setup activator action
 
     moviebox-connect -setup && reboot
 
-
-Start background process manually. moviebox-connect is running as LaunchDaemonn therefore no need to start it. Use this option for troubleshooting/development.
+Start background process manually. moviebox-connect is running in background, no need to start it. Use this option for troubleshooting/development.
 
     fill remote host details in ~/moviebox-connect.txt and start without any option
 
