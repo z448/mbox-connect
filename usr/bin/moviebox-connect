@@ -67,13 +67,10 @@ sub url {
             $line =~ s/(.*?)(http:\/\/.*?)(<\/.*)/$2/;
             #$line =~ s/(.*?key\>)(http:\/\/.*?)(<\/.*)/$2/;
             chomp($line);
-            #print "URL: $line\n";
             open(my $tmp,'>',"$c->{ios}->{url}");
-            #print "URL: $line\n";
             print $tmp $line;
             close $tmp;
             system("rm -rf /tmp/MediaCache/*");
-            #system("echo '' > $c->{ios}->{cache}");
             return;
         }
     }
@@ -93,6 +90,8 @@ sub vlc {
     }
 
     if($opt->{s} eq 'how'){ print $url and return }
+
+    system("echo \'$c->{playlist}->{head}$url$c->{playlist}->{tail}\' > /tmp/moviebox.xspf");
 
     my $open = 'export DISPLAY=:0 && vlc -f'; $open = 'open' if $user->{os} eq 'osx';
     my @cmd = ( "echo \'$c->{playlist}->{head}$url$c->{playlist}->{tail}\' > ~/Desktop/moviebox.xspf && $open ~/Desktop/moviebox.xspf > /dev/null 2>&1" );
