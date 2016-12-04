@@ -30,7 +30,7 @@ sudo apt-get install vlc openssh-server
 
 Make sure iOS is connected to the same WiFi as your computer. Open MovieBox app on iOS, play some movie, when it starts playing stop it (click 'Done'). To watch video on your computer trigger your **Activator** gesture and video will start playing on your computer.
 
-### Windows
+### Alternative
 There is alternative method which doesn't require ssh so it can also be used on windows. Instead of connecting to computer via ssh it uses iFile's webserver so VLC can connect to iPhone. To use this method, install iFile and after trigering Activator event switch on webserver in iFile. Then in VLC go to *Media* -> *Open network* and fill in `http://<name>.local:10000/tmp/moviebox.xspf` where *name* is iPhone hostname and can be found in *Settings->General->About->Name*.
 
 # KNOWN ISSUES
